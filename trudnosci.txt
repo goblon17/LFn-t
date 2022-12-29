@@ -1,0 +1,8 @@
+- trudność
++ rozwiązanie
+
+- zmieszczenie wszystkich komponentów na posiadanej płytce stykowej o rozmiarze połowy normalnej
++ specjalne zaprojektowanie schematu wykorzystujące jak najefektywniej dostępną przestrzeń
+
+- zmieszczenie 16 sygnałów (8 wyjść na led i 8 wejść na przyciski) na 12 pinach Arduino (piny 2 - 13; bez TX i RX)
++ ledy można połączyć parami by uzyskać 12 sygnałów (4 led, 8 przycisków), w grze ledy świecą się tak samo dla obu graczy
