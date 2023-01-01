@@ -71,6 +71,7 @@ void setup() {
   lcd.clear();
   
   scene = MAIN_MENU;
+  randomSeed(analogRead(0));
 }
 
 void loop() {
@@ -127,7 +128,73 @@ void preLoop() {
 }
 
 void gameLoop() {
+  if (roundsPlayed >= roundsNumber) {
+    scene = GAME_OVER;
+    return;
+  }
 
+  int color = random(4);
+  int led = LED_RED;
+  int buttonP1 = P1_RED;
+  int buttonP2 = P2_RED;
+  int valP1;
+  int valP2;
+  switch (color) {
+    case 0:
+      led = LED_RED;
+      buttonP1 = P1_RED;
+      buttonP2 = P2_RED;
+      break;
+    case 1:
+      led = LED_GREEN;
+      buttonP1 = P1_GREEN;
+      buttonP2 = P2_GREEN;
+      break;
+    case 2:
+      led = LED_BLUE;
+      buttonP1 = P1_BLUE;
+      buttonP2 = P2_BLUE;
+      break;
+    case 3:
+      led = LED_YELLOW;
+      buttonP1 = P1_YELLOW;
+      buttonP2 = P2_YELLOW;
+      break;
+  }
+
+  lcd.clear();
+  lcd.print("   Round: ");
+  char buf[4];
+  itoa(roundsPlayed+1, buf, 10);
+  lcd.print(buf);
+
+  delay(1000);
+  lcd.setCursor(8, 1);
+  lcd.print("3");
+  delay(1000);
+  lcd.setCursor(8, 1);
+  lcd.print("2");
+  delay(1000);
+  lcd.setCursor(8, 1);
+  lcd.print("1");
+  delay(1000);
+  lcd.setCursor(5, 1);
+  lcd.print("Press!");
+
+  digitalWrite(led, HIGH);
+
+  while ( (valP1 = digitalRead(buttonP1)) == HIGH || (valP2 = digitalRead(buttonP2)) == HIGH ) {}
+
+  if (valP1 == LOW) {
+    player1Score ++;
+  }
+  if (valP2 == LOW) {
+    player2Score ++;
+  }
+
+  digitalWrite(led, LOW);
+
+  roundsPlayed ++;
 }
 
 void overLoop() {
