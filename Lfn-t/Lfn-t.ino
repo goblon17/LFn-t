@@ -40,9 +40,10 @@ int roundsPlayed = 0;
 int player1Score = 0;
 int player2Score = 0;
 
-LiquidCrystal_I2C lcd(0x20, 16, 2);
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
 
 void setup() {
+
   // Setup player 1 buttons
   pinMode(P1_RED, INPUT_PULLUP);
   pinMode(P1_GREEN, INPUT_PULLUP);
@@ -66,9 +67,9 @@ void setup() {
   digitalWrite(LED_YELLOW, LOW);
 
   // Setup LCD
+  lcd.init();
   lcd.backlight();
   lcd.setCursor(0,0);
-  lcd.clear();
   
   scene = MAIN_MENU;
   randomSeed(analogRead(0));
@@ -92,17 +93,20 @@ void loop() {
 }
 
 void menuLoop() {
-  lcd.clear();
+  lcd.setCursor(0, 0);
   lcd.print("      LFn't     ");
+  lcd.setCursor(0, 1);
   lcd.print("    Start (G)   ");
   if (isPressed(P1_GREEN) || isPressed(P2_GREEN)) {
     scene = PRE_GAME;
+    while(isPressed(P1_GREEN) || isPressed(P2_GREEN)) {}
   }
 }
 
 void preLoop() {
-  lcd.clear();
+  lcd.setCursor(0, 0);
   lcd.print("   Rounds (G)   ");
+  lcd.setCursor(0, 1);
   lcd.print("<R            B>");
   char buf[4];
   itoa(roundsNumber, buf, 10);
@@ -114,16 +118,19 @@ void preLoop() {
     if (roundsNumber < MAX_ROUNDS_NUMBER) {
       roundsNumber ++;
     }
+    while (isPressed(P1_BLUE) || isPressed(P2_BLUE)) {}
   }
 
   if (isPressed(P1_RED) || isPressed(P2_RED)) {
     if (roundsNumber > 1) {
       roundsNumber --;
     }
+    while (isPressed(P1_RED) || isPressed(P2_RED)) {}
   }
 
   if (isPressed(P1_GREEN) || isPressed(P2_GREEN)) {
     scene = GAME;
+    while (isPressed(P1_GREEN) || isPressed(P2_GREEN)) {}
   }
 }
 
@@ -162,11 +169,15 @@ void gameLoop() {
       break;
   }
 
-  lcd.clear();
+  lcd.setCursor(0, 0);
   lcd.print("   Round: ");
   char buf[4];
   itoa(roundsPlayed+1, buf, 10);
   lcd.print(buf);
+  lcd.print("      ");
+
+  lcd.setCursor(0, 1);
+  lcd.print("                ");
 
   delay(1000);
   lcd.setCursor(8, 1);
@@ -183,7 +194,7 @@ void gameLoop() {
 
   digitalWrite(led, HIGH);
 
-  while ( (valP1 = digitalRead(buttonP1)) == HIGH || (valP2 = digitalRead(buttonP2)) == HIGH ) {}
+  while ( (valP1 = digitalRead(buttonP1)) == HIGH && (valP2 = digitalRead(buttonP2)) == HIGH ) {}
 
   if (valP1 == LOW) {
     player1Score ++;
@@ -194,11 +205,13 @@ void gameLoop() {
 
   digitalWrite(led, LOW);
 
+  while (isPressed(buttonP1) || isPressed(buttonP2)) {}  
+
   roundsPlayed ++;
 }
 
 void overLoop() {
-  lcd.clear();
+  lcd.setCursor(0, 0);
   if (player1Score > player2Score) {
     lcd.print("   Winner: P1   ");
   }
@@ -208,10 +221,12 @@ void overLoop() {
   else if (player1Score == player2Score) {
     lcd.print("       Tie      ");
   }
+  lcd.setCursor(0, 1);
   lcd.print("  Continue (G)  ");
   if (isPressed(P1_GREEN) || isPressed(P2_GREEN)) {
     resetGame();
     scene = MAIN_MENU;
+    while (isPressed(P1_GREEN) || isPressed(P2_GREEN)) {}
   }
 }
 
