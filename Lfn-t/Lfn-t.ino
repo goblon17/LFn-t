@@ -15,6 +15,7 @@
 #define LED_BLUE 12
 #define LED_YELLOW 13
 
+// Helper macro
 #define isPressed(x) (digitalRead(x)==LOW)
 
 #define MAX_ROUNDS_NUMBER 999
@@ -72,6 +73,7 @@ void setup() {
   lcd.setCursor(0,0);
   
   scene = MAIN_MENU;
+  // Get random value as seed
   randomSeed(analogRead(0));
 }
 
@@ -94,11 +96,14 @@ void loop() {
 
 void menuLoop() {
   lcd.setCursor(0, 0);
+  // Print full 16 char row so it works as if the screen was cleared first
   lcd.print("      LFn't     ");
   lcd.setCursor(0, 1);
   lcd.print("    Start (G)   ");
+  // Halndle switch press
   if (isPressed(P1_GREEN) || isPressed(P2_GREEN)) {
     scene = PRE_GAME;
+    // Wait for switch to be released
     while(isPressed(P1_GREEN) || isPressed(P2_GREEN)) {}
   }
 }
@@ -107,13 +112,16 @@ void preLoop() {
   lcd.setCursor(0, 0);
   lcd.print("   Rounds (G)   ");
   lcd.setCursor(0, 1);
+  // Leave space for the number in the middle
   lcd.print("<R            B>");
+  // Calculate position and print number so that it's centered
   char buf[4];
   itoa(roundsNumber, buf, 10);
   int pos = 8 - (strlen(buf) / 2);
   lcd.setCursor(pos, 1);
   lcd.printstr(buf);
 
+  // Handle switch presses with waiting for the release
   if (isPressed(P1_BLUE) || isPressed(P2_BLUE)) {
     if (roundsNumber < MAX_ROUNDS_NUMBER) {
       roundsNumber ++;
@@ -135,11 +143,13 @@ void preLoop() {
 }
 
 void gameLoop() {
+  // Check if all the rounds are played
   if (roundsPlayed >= roundsNumber) {
     scene = GAME_OVER;
     return;
   }
 
+  // Get random color and assign corresponding values to universal variables
   int color = random(4);
   int led = LED_RED;
   int buttonP1 = P1_RED;
@@ -169,6 +179,7 @@ void gameLoop() {
       break;
   }
 
+  // Print which round it is now (this round isn't played yet hence `+1`)
   lcd.setCursor(0, 0);
   lcd.print("   Round: ");
   char buf[4];
@@ -176,9 +187,11 @@ void gameLoop() {
   lcd.print(buf);
   lcd.print("      ");
 
+  // Clear lower row
   lcd.setCursor(0, 1);
   lcd.print("                ");
 
+  // Perform a countdown
   delay(1000);
   lcd.setCursor(8, 1);
   lcd.print("3");
@@ -192,10 +205,13 @@ void gameLoop() {
   lcd.setCursor(5, 1);
   lcd.print("Press!");
 
+  // Turn on the random led
   digitalWrite(led, HIGH);
 
+  // Wait for input and remember who pressed it
   while ( (valP1 = digitalRead(buttonP1)) == HIGH && (valP2 = digitalRead(buttonP2)) == HIGH ) {}
 
+  // Check who pressed the correct button and give points (it can be a tie)
   if (valP1 == LOW) {
     player1Score ++;
   }
@@ -203,14 +219,18 @@ void gameLoop() {
     player2Score ++;
   }
 
+  // Turn off the random led
   digitalWrite(led, LOW);
 
+  // Wait for the buttons to be released
   while (isPressed(buttonP1) || isPressed(buttonP2)) {}  
 
+  // The round is played so increment the counter
   roundsPlayed ++;
 }
 
 void overLoop() {
+  // Determine who the winner is and print it
   lcd.setCursor(0, 0);
   if (player1Score > player2Score) {
     lcd.print("   Winner: P1   ");
@@ -223,6 +243,7 @@ void overLoop() {
   }
   lcd.setCursor(0, 1);
   lcd.print("  Continue (G)  ");
+  // Handle input
   if (isPressed(P1_GREEN) || isPressed(P2_GREEN)) {
     resetGame();
     scene = MAIN_MENU;
@@ -230,6 +251,7 @@ void overLoop() {
   }
 }
 
+// Reset crutial game values
 void resetGame() {
   roundsPlayed = 0;
   player1Score = 0;
