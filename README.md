@@ -18,6 +18,9 @@ An Arduino project for Embeded Systems course
 |    Half BreadBoard    |       2      |
 |         Cables        |     A lot    |
 
+## Video presenting this in action
+[![Video](https://img.youtube.com/vi/BdKcJv0rTCg/0.jpg)](https://www.youtube.com/watch?v=BdKcJv0rTCg)
+
 ## Environment
 Developed in Arduino IDE with use of [LiquidCrystal_I2C](https://www.arduinolibraries.info/libraries/liquid-crystal-i2-c) library.
 
